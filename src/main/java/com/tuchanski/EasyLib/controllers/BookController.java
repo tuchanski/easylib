@@ -2,11 +2,15 @@ package com.tuchanski.EasyLib.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.UUID;
 
 import com.tuchanski.EasyLib.models.DTOs.BookRecordDTO;
 import com.tuchanski.EasyLib.services.BookService;
@@ -28,6 +32,11 @@ public class BookController {
     @PostMapping
     private ResponseEntity<Object> createBook(@RequestBody @Valid BookRecordDTO newBook) {
         return bookService.createBook(newBook);
+    }
+
+    @DeleteMapping("/{id}")
+    private ResponseEntity<Object> deleteBook(@PathVariable(value = "id") UUID id){
+        return bookService.deleteBook(id);
     }
 
 }
