@@ -34,7 +34,7 @@ public class BookService {
         newBook.setGenre(validatedGenre);
         
         try {
-            if (!bookRepository.existsByTitleAndAuthor(newBook.getTitle(), newBook.getAuthor())){
+            if (!bookRepository.existsByTitleAndAuthorAndGenre(newBook.getTitle(), newBook.getAuthor(), validatedGenre)){
                 return ResponseEntity.status(HttpStatus.CREATED).body(bookRepository.save(newBook));
             }
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Book already exists");
@@ -50,11 +50,40 @@ public class BookService {
         Optional<Book> toBeDeleted = bookRepository.findById(id);
 
         if (toBeDeleted.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book doesn't exist");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
         }
 
         bookRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Book with ID " + id + " has been deleted");
+    }
+
+    // UPDATE
+    public ResponseEntity<Object> updateBook(UUID id, BookRecordDTO newInfoDTO){
+
+        Optional<Book> existingBook = bookRepository.findById(id);
+
+        if (existingBook.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+        }
+
+        Book bookToBeUpdated = existingBook.get();
+
+        BookGenre validatedGenre = getGenreByDisplayName(newInfoDTO.genre().toString());
+
+        try {
+            
+            if (!bookRepository.existsByTitleAndAuthorAndGenre(newInfoDTO.title(), newInfoDTO.author(), validatedGenre)){
+                BeanUtils.copyProperties(newInfoDTO, bookToBeUpdated, "genre");
+                bookToBeUpdated.setGenre(validatedGenre);
+                return ResponseEntity.status(HttpStatus.OK).body(bookRepository.save(bookToBeUpdated));
+            }
+
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Book already exists");
+
+        } catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+        }
+
     }
 
 
