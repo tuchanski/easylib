@@ -21,7 +21,19 @@ public class BookService {
     private BookRepository bookRepository;
 
     public ResponseEntity<Object> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(bookRepository.findAll());
+        return ResponseEntity.status(HttpStatus.OK).body(this.bookRepository.findAll());
+    }
+
+    public ResponseEntity<Object> getById(UUID id){
+        Optional<Book> existingBookOpt = this.bookRepository.findById(id);
+
+        if (existingBookOpt.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+        }
+
+        Book isFound = existingBookOpt.get();
+
+        return ResponseEntity.status(HttpStatus.OK).body(isFound);
     }
 
     public ResponseEntity<Object> createBook(BookRecordDTO bookDTO) {
@@ -33,8 +45,8 @@ public class BookService {
         newBook.setGenre(validatedGenre);
         
         try {
-            if (!bookRepository.existsByTitleAndAuthorAndGenre(newBook.getTitle(), newBook.getAuthor(), validatedGenre)){
-                return ResponseEntity.status(HttpStatus.CREATED).body(bookRepository.save(newBook));
+            if (!this.bookRepository.existsByTitleAndAuthorAndGenre(newBook.getTitle(), newBook.getAuthor(), validatedGenre)){
+                return ResponseEntity.status(HttpStatus.CREATED).body(this.bookRepository.save(newBook));
             }
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Book already exists");
 
@@ -45,19 +57,19 @@ public class BookService {
 
     public ResponseEntity<Object> deleteBook(UUID id){
 
-        Optional<Book> toBeDeleted = bookRepository.findById(id);
+        Optional<Book> toBeDeleted = this.bookRepository.findById(id);
 
         if (toBeDeleted.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
         }
 
-        bookRepository.deleteById(id);
+        this.bookRepository.deleteById(id);
         return ResponseEntity.status(HttpStatus.OK).body("Book with ID " + id + " has been deleted");
     }
 
     public ResponseEntity<Object> updateBook(UUID id, BookRecordDTO newInfoDTO){
 
-        Optional<Book> existingBookOpt = bookRepository.findById(id);
+        Optional<Book> existingBookOpt = this.bookRepository.findById(id);
 
         if (existingBookOpt.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
@@ -67,7 +79,7 @@ public class BookService {
 
         BookGenre validatedGenre = getGenreByDisplayName(newInfoDTO.genre().toString());
 
-        boolean bookExists = bookRepository.existsByTitleAndAuthorAndGenre(newInfoDTO.title(), newInfoDTO.author(), validatedGenre);
+        boolean bookExists = this.bookRepository.existsByTitleAndAuthorAndGenre(newInfoDTO.title(), newInfoDTO.author(), validatedGenre);
         if (bookExists) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Book already exists");
         }
@@ -77,7 +89,7 @@ public class BookService {
         bookToBeUpdated.setGenre(validatedGenre);
 
         try {
-            Book updatedBook = bookRepository.save(bookToBeUpdated);
+            Book updatedBook = this.bookRepository.save(bookToBeUpdated);
             return ResponseEntity.status(HttpStatus.OK).body(updatedBook);
 
         } catch (Exception e){

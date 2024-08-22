@@ -27,22 +27,27 @@ public class BookController {
 
     @GetMapping
     private ResponseEntity<Object> getAll() {
-        return bookService.getAll();
+        return this.bookService.getAll();
+    }
+
+    @GetMapping("/{id}")
+    private ResponseEntity<Object> getById(@PathVariable(value = "id") UUID id){
+        return this.bookService.getById(id);
     }
 
     @PostMapping
     private ResponseEntity<Object> createBook(@RequestBody @Valid BookRecordDTO newBook) {
-        return bookService.createBook(newBook);
+        return this.bookService.createBook(newBook);
     }
 
     @DeleteMapping("/{id}")
     private ResponseEntity<Object> deleteBook(@PathVariable(value = "id") UUID id){
-        return bookService.deleteBook(id);
+        return this.bookService.deleteBook(id);
     }
 
     @PutMapping("/{id}")
     private ResponseEntity<Object> updateBook(@PathVariable(value = "id") UUID id, @RequestBody @Valid BookRecordDTO updatedBook){
-        return bookService.updateBook(id, updatedBook);
+        return this.bookService.updateBook(id, updatedBook);
     }
 
 }
