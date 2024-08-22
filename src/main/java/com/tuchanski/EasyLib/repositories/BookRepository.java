@@ -9,5 +9,7 @@ import com.tuchanski.EasyLib.models.Book;
 
 @Repository
 public interface BookRepository extends JpaRepository<Book, UUID> {
+
+    boolean existsByTitleAndAuthor(String title, String author);
     
 }

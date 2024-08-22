@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.tuchanski.EasyLib.models.Book;
-import com.tuchanski.EasyLib.models.dtos.BookRecordDTO;
+import com.tuchanski.EasyLib.models.DTOs.BookRecordDTO;
 import com.tuchanski.EasyLib.models.enums.BookGenre;
 import com.tuchanski.EasyLib.repositories.BookRepository;
 
@@ -23,38 +23,31 @@ public class BookService {
 
     public ResponseEntity<Object> createBook(BookRecordDTO bookDTO) {
         Book newBook = new Book();
+        
+        BeanUtils.copyProperties(bookDTO, newBook, "genre");
 
+        BookGenre validatedGenre = getGenreByDisplayName(bookDTO.genre().toString());
+        newBook.setGenre(validatedGenre);
+        
         try {
-            BookGenre validatedBookGenre = validateBookGenre(bookDTO.genre().toString());
-
-            BookGenre validatedGenre = BookGenre.valueOf(bookDTO.genre().toString().toUpperCase());
-
-            if (validatedBookGenre == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Genre not valid");
+            if (!bookRepository.existsByTitleAndAuthor(newBook.getTitle(), newBook.getAuthor())){
+                return ResponseEntity.status(HttpStatus.CREATED).body(bookRepository.save(newBook));
             }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Book already exists");
 
-            newBook.setGenre(validatedBookGenre);
-            BeanUtils.copyProperties(bookDTO, newBook);
-
-            return ResponseEntity.status(HttpStatus.CREATED).body(bookRepository.save(newBook));
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid genre: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
         }
     }
-
-    private BookGenre validateBookGenre(String genreToValidate) {
-        if (genreToValidate == null) {
-            return null;
+    
+    private BookGenre getGenreByDisplayName(String displayName){
+        for (BookGenre genre : BookGenre.values()){
+            if (genre.getDisplayName().equalsIgnoreCase(displayName)){
+                return genre;
+            }
         }
-
-        try {
-            return BookGenre.valueOf(genreToValidate.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return null;
-        }
+        throw new IllegalArgumentException("Genre not found: " + displayName);
     }
+
 
 }

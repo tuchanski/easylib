@@ -1,4 +1,4 @@
-package com.tuchanski.EasyLib.models.dtos;
+package com.tuchanski.EasyLib.models.DTOs;
 
 import com.tuchanski.EasyLib.models.enums.BookGenre;
 import jakarta.validation.constraints.NotBlank;
