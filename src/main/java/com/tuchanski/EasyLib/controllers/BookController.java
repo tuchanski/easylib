@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.tuchanski.EasyLib.models.DTOs.BookRecordDTO;
+import com.tuchanski.EasyLib.models.dtos.BookRecordDTO;
 import com.tuchanski.EasyLib.services.BookService;
 
 import jakarta.validation.Valid;

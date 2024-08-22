@@ -3,6 +3,8 @@ package com.tuchanski.EasyLib.models;
 import java.io.Serializable;
 import java.util.UUID;
 
+import com.tuchanski.EasyLib.models.enums.BookGenre;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,5 +40,8 @@ public class Book implements Serializable {
 
     @NotNull
     private String description;
+
+    @NotNull
+    private BookGenre genre;
 
 }

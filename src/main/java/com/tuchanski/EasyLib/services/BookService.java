@@ -7,7 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.tuchanski.EasyLib.models.Book;
-import com.tuchanski.EasyLib.models.DTOs.BookRecordDTO;
+import com.tuchanski.EasyLib.models.dtos.BookRecordDTO;
+import com.tuchanski.EasyLib.models.enums.BookGenre;
 import com.tuchanski.EasyLib.repositories.BookRepository;
 
 @Service
@@ -21,17 +22,36 @@ public class BookService {
     }
 
     public ResponseEntity<Object> createBook(BookRecordDTO bookDTO) {
-
         Book newBook = new Book();
-
+    
         try {
+            BookGenre validatedBookGenre = validateBookGenre(bookDTO.genre().toString());
+    
+            if (validatedBookGenre == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Genre not valid");
+            }
+    
+            newBook.setGenre(validatedBookGenre); 
+    
             BeanUtils.copyProperties(bookDTO, newBook);
-            return ResponseEntity.status(HttpStatus.OK).body(bookRepository.save(newBook));
-
+    
+            Book savedBook = bookRepository.save(newBook);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
+    
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid genre: " + e.getMessage());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error creating new book");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
         }
-
     }
+    
+    private BookGenre validateBookGenre(String genreToValidate) {
+        try {
+            return BookGenre.valueOf(genreToValidate.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+    
 
 }
