@@ -23,35 +23,38 @@ public class BookService {
 
     public ResponseEntity<Object> createBook(BookRecordDTO bookDTO) {
         Book newBook = new Book();
-    
+
         try {
             BookGenre validatedBookGenre = validateBookGenre(bookDTO.genre().toString());
-    
+
+            BookGenre validatedGenre = BookGenre.valueOf(bookDTO.genre().toString().toUpperCase());
+
             if (validatedBookGenre == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Genre not valid");
             }
-    
-            newBook.setGenre(validatedBookGenre); 
-    
+
+            newBook.setGenre(validatedBookGenre);
             BeanUtils.copyProperties(bookDTO, newBook);
-    
-            Book savedBook = bookRepository.save(newBook);
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedBook);
-    
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(bookRepository.save(newBook));
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid genre: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
         }
     }
-    
+
     private BookGenre validateBookGenre(String genreToValidate) {
+        if (genreToValidate == null) {
+            return null;
+        }
+
         try {
             return BookGenre.valueOf(genreToValidate.toUpperCase());
         } catch (IllegalArgumentException e) {
             return null;
         }
     }
-    
 
 }
