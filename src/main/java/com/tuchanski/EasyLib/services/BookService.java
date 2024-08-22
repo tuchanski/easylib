@@ -60,25 +60,28 @@ public class BookService {
     // UPDATE
     public ResponseEntity<Object> updateBook(UUID id, BookRecordDTO newInfoDTO){
 
-        Optional<Book> existingBook = bookRepository.findById(id);
+        Optional<Book> existingBookOpt = bookRepository.findById(id);
 
-        if (existingBook.isEmpty()){
+        if (existingBookOpt.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
         }
 
-        Book bookToBeUpdated = existingBook.get();
+        Book bookToBeUpdated = existingBookOpt.get();
 
         BookGenre validatedGenre = getGenreByDisplayName(newInfoDTO.genre().toString());
 
-        try {
-            
-            if (!bookRepository.existsByTitleAndAuthorAndGenre(newInfoDTO.title(), newInfoDTO.author(), validatedGenre)){
-                BeanUtils.copyProperties(newInfoDTO, bookToBeUpdated, "genre");
-                bookToBeUpdated.setGenre(validatedGenre);
-                return ResponseEntity.status(HttpStatus.OK).body(bookRepository.save(bookToBeUpdated));
-            }
-
+        boolean bookExists = bookRepository.existsByTitleAndAuthorAndGenre(newInfoDTO.title(), newInfoDTO.author(), validatedGenre);
+        if (bookExists) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Book already exists");
+        }
+
+        bookToBeUpdated.setTitle(newInfoDTO.title());
+        bookToBeUpdated.setAuthor(newInfoDTO.author());
+        bookToBeUpdated.setGenre(validatedGenre);
+
+        try {
+            Book updatedBook = bookRepository.save(bookToBeUpdated);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedBook);
 
         } catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
