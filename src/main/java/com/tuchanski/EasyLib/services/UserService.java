@@ -81,6 +81,38 @@ public class UserService {
 
     }
 
+    public ResponseEntity<Object> updateUser(UUID id, UserRecordDTO newInfoDTO) {
+
+        Optional<User> existingUserOpt = this.userRepository.findById(id);
+
+        if (existingUserOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        User userToBeUpdated = existingUserOpt.get();
+
+        var validatedDTO = (UserRecordDTO) validateUserDTO(newInfoDTO).getBody();
+
+        if (!this.passwordEncoder.matches(validatedDTO.password(), userToBeUpdated.getPassword())) {
+            userToBeUpdated.setPassword(this.passwordEncoder.encode(validatedDTO.password()));
+        }
+
+        if (!userToBeUpdated.getUsername().equals(validatedDTO.username())){
+            userToBeUpdated.setUsername(validatedDTO.username());
+        }
+
+        if (!userToBeUpdated.getEmail().equals(validatedDTO.email())){
+            userToBeUpdated.setEmail(validatedDTO.email());
+        }
+
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(this.userRepository.save(userToBeUpdated));
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+        }
+    }
+
     private ResponseEntity<Object> validateUserDTO(UserRecordDTO userDTO) {
 
         if (!emailValidator.isValid(userDTO.email())) {
@@ -102,5 +134,4 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
 
     }
-
 }
