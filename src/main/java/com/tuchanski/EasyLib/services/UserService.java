@@ -1,6 +1,10 @@
 package com.tuchanski.EasyLib.services;
 
 import org.springframework.beans.BeanUtils;
+
+import java.util.Optional;
+import java.util.UUID;
+
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +35,20 @@ public class UserService {
         return ResponseEntity.status(HttpStatus.OK).body(this.userRepository.findAll());
     }
 
+    public ResponseEntity<Object> getById(UUID id) {
+
+        Optional<User> existingUserOpt = this.userRepository.findById(id);
+
+        if (existingUserOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        User isFound = existingUserOpt.get();
+
+        return ResponseEntity.status(HttpStatus.OK).body(isFound);
+
+    }
+
     public ResponseEntity<Object> createUser(UserRecordDTO userDTO) {
 
         User newUser = new User();
@@ -47,6 +65,19 @@ public class UserService {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
         }
+
+    }
+
+    public ResponseEntity<Object> deleteUser(UUID id) {
+
+        Optional<User> existingUserOpt = this.userRepository.findById(id);
+
+        if (existingUserOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+
+        this.userRepository.deleteById(id);
+        return ResponseEntity.status(HttpStatus.OK).body("User with ID " + id + " has been deleted");
 
     }
 
