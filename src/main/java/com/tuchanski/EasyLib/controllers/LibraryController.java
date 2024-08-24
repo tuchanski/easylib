@@ -35,10 +35,18 @@ public class LibraryController {
         return this.libraryService.deleteLibrary(libraryId);
     }
 
+    // Library has Book Operations Below -> Add and Delete book
+
     @PostMapping("/addBook/{libraryId}/{bookId}")
     public ResponseEntity<Object> addBook(@PathVariable(value = "libraryId") UUID libraryId,
             @PathVariable(value = "bookId") UUID bookId) {
         return this.libraryService.addBook(libraryId, bookId);
+    }
+
+    @DeleteMapping("/delBook/{libraryId}/{bookId}")
+    public ResponseEntity<Object> deleteBook(@PathVariable(value = "libraryId") UUID libraryId,
+            @PathVariable(value = "bookId") UUID bookId) {
+        return this.libraryService.deleteBook(libraryId, bookId);
     }
 
 }

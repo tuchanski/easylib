@@ -2,6 +2,7 @@ package com.tuchanski.EasyLib.models;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
@@ -45,6 +46,14 @@ public class Library implements Serializable {
 
     public void addBook(Book book) {
         this.books.add(book);
+    }
+
+    public void deleteBook(Book book) {
+        if (this.books.contains(book)) {
+            books.remove(book);
+        } else {
+            throw new NoSuchElementException();
+        }
     }
 
 }

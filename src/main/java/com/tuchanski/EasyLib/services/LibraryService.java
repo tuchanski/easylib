@@ -1,5 +1,6 @@
 package com.tuchanski.EasyLib.services;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -89,6 +90,39 @@ public class LibraryService {
         currentLibrary.addBook(bookToBeAdded);
 
         return ResponseEntity.status(HttpStatus.OK).body(this.libraryRepository.save(currentLibrary));
+
+    }
+
+    public ResponseEntity<Object> deleteBook(UUID libraryId, UUID bookId) {
+
+        Optional<Library> existingLibraryOpt = this.libraryRepository.findById(libraryId);
+
+        if (existingLibraryOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Library not found");
+        }
+
+        Library currentLibrary = existingLibraryOpt.get();
+
+        Optional<Book> existingBookOpt = this.bookRepository.findById(bookId);
+
+        if (existingBookOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+        }
+
+        Book toBeDeleted = existingBookOpt.get();
+
+        if (!currentLibrary.getBooks().contains(toBeDeleted)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Book is not registered on library");
+        }
+
+        try {
+            currentLibrary.deleteBook(toBeDeleted);
+            this.libraryRepository.save(currentLibrary);
+            return ResponseEntity.status(HttpStatus.OK).body("Selected book has been deleted");
+
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
 
     }
 
