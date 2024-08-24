@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,9 +25,20 @@ public class LibraryController {
         return this.libraryService.getAll();
     }
 
-    @PostMapping("{idUser}")
-    public ResponseEntity<Object> createLibrary(@PathVariable(value = "idUser") UUID userId){
+    @PostMapping("{userId}")
+    public ResponseEntity<Object> createLibrary(@PathVariable(value = "userId") UUID userId) {
         return this.libraryService.createLibrary(userId);
+    }
+
+    @DeleteMapping("{libraryId}")
+    public ResponseEntity<Object> deleteLibrary(@PathVariable(value = "libraryId") UUID libraryId) {
+        return this.libraryService.deleteLibrary(libraryId);
+    }
+
+    @PostMapping("/addBook/{libraryId}/{bookId}")
+    public ResponseEntity<Object> addBook(@PathVariable(value = "libraryId") UUID libraryId,
+            @PathVariable(value = "bookId") UUID bookId) {
+        return this.libraryService.addBook(libraryId, bookId);
     }
 
 }

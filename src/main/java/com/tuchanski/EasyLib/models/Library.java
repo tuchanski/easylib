@@ -43,4 +43,8 @@ public class Library implements Serializable {
     @JoinTable(name = "libraries_books", joinColumns = @JoinColumn(name = "library_id"), inverseJoinColumns = @JoinColumn(name = "book_id"))
     private List<Book> books;
 
+    public void addBook(Book book) {
+        this.books.add(book);
+    }
+
 }
