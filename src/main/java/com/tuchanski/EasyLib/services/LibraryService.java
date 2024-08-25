@@ -1,5 +1,7 @@
 package com.tuchanski.EasyLib.services;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
@@ -135,6 +137,29 @@ public class LibraryService {
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
+
+    }
+
+    public ResponseEntity<Object> cleanLibrary(UUID libraryId) {
+
+        Optional<Library> existingLibraryOpt = this.libraryRepository.findById(libraryId);
+
+        if (existingLibraryOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Library not found");
+        }
+
+        Library currentLibrary = existingLibraryOpt.get();
+
+        if (currentLibrary.getBooks().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("The library is already empty");
+        }
+
+        List<Book> emptyBookList = new ArrayList<>();
+
+        currentLibrary.setBooks(emptyBookList);
+        this.libraryRepository.save(currentLibrary);
+
+        return ResponseEntity.status(HttpStatus.OK).body("The library has been cleaned");
 
     }
 

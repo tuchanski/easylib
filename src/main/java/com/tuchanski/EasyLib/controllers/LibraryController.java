@@ -40,6 +40,11 @@ public class LibraryController {
         return this.libraryService.deleteLibrary(libraryId);
     }
 
+    @DeleteMapping("/clean/{libraryId}")
+    public ResponseEntity<Object> cleanLibrary(@PathVariable(value = "libraryId") UUID libraryId) {
+        return this.libraryService.cleanLibrary(libraryId);
+    }
+
     // Library has Book Operations Below -> Add and Delete book
 
     @PostMapping("/addBook/{libraryId}/{bookId}")
