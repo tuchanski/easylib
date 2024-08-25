@@ -66,28 +66,26 @@ public class LibraryService {
 
     }
 
-    public ResponseEntity<Object> deleteLibrary(UUID id) {
+    public ResponseEntity<Object> deleteLibrary(UUID libraryId) {
 
-        Optional<Library> existingLibraryOpt = this.libraryRepository.findById(id);
+        Library currentLibrary = validateLibrary(libraryId);
 
-        if (existingLibraryOpt.isEmpty()) {
+        if (currentLibrary == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Library not found");
         }
 
-        this.libraryRepository.deleteById(id);
+        this.libraryRepository.deleteById(libraryId);
         return ResponseEntity.status(HttpStatus.OK).body("Library has been deleted");
 
     }
 
     public ResponseEntity<Object> addBook(UUID libraryId, UUID bookId) {
 
-        Optional<Library> existingLibraryOpt = this.libraryRepository.findById(libraryId);
+        Library currentLibrary = validateLibrary(libraryId);
 
-        if (existingLibraryOpt.isEmpty()) {
+        if (currentLibrary == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Library not found");
         }
-
-        Library currentLibrary = existingLibraryOpt.get();
 
         Optional<Book> existingBookOpt = this.bookRepository.findById(bookId);
 
@@ -109,13 +107,11 @@ public class LibraryService {
 
     public ResponseEntity<Object> deleteBook(UUID libraryId, UUID bookId) {
 
-        Optional<Library> existingLibraryOpt = this.libraryRepository.findById(libraryId);
+        Library currentLibrary = validateLibrary(libraryId);
 
-        if (existingLibraryOpt.isEmpty()) {
+        if (currentLibrary == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Library not found");
         }
-
-        Library currentLibrary = existingLibraryOpt.get();
 
         Optional<Book> existingBookOpt = this.bookRepository.findById(bookId);
 
@@ -142,13 +138,11 @@ public class LibraryService {
 
     public ResponseEntity<Object> cleanLibrary(UUID libraryId) {
 
-        Optional<Library> existingLibraryOpt = this.libraryRepository.findById(libraryId);
+        Library currentLibrary = validateLibrary(libraryId);
 
-        if (existingLibraryOpt.isEmpty()) {
+        if (currentLibrary == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Library not found");
         }
-
-        Library currentLibrary = existingLibraryOpt.get();
 
         if (currentLibrary.getBooks().isEmpty()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("The library is already empty");
@@ -161,6 +155,20 @@ public class LibraryService {
 
         return ResponseEntity.status(HttpStatus.OK).body("The library has been cleaned");
 
+    }
+
+    // Validation private methods
+
+    private Library validateLibrary(UUID libraryId) {
+        Optional<Library> existingLibraryOpt = this.libraryRepository.findById(libraryId);
+
+        if (existingLibraryOpt.isEmpty()) {
+            return null;
+        }
+
+        Library validatedLibrary = existingLibraryOpt.get();
+
+        return validatedLibrary;
     }
 
 }
