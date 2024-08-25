@@ -34,6 +34,18 @@ public class LibraryService {
         return ResponseEntity.status(HttpStatus.OK).body(this.libraryRepository.findAll());
     }
 
+    public ResponseEntity<Object> getLibraryById(UUID libraryId) {
+
+        Optional<Library> existingLibraryOpt = this.libraryRepository.findById(libraryId);
+
+        if (existingLibraryOpt.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Library not found");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(existingLibraryOpt.get());
+
+    }
+
     public ResponseEntity<Object> createLibrary(UUID userId) {
 
         Optional<User> existingUserOpt = this.userRepository.findById(userId);

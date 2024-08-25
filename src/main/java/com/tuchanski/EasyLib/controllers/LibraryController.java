@@ -25,6 +25,11 @@ public class LibraryController {
         return this.libraryService.getAll();
     }
 
+    @GetMapping("{libraryId}")
+    public ResponseEntity<Object> getById(@PathVariable(value = "libraryId") UUID libraryId) {
+        return this.libraryService.getLibraryById(libraryId);
+    }
+
     @PostMapping("{userId}")
     public ResponseEntity<Object> createLibrary(@PathVariable(value = "userId") UUID userId) {
         return this.libraryService.createLibrary(userId);
