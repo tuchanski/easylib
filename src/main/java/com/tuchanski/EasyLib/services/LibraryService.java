@@ -31,7 +31,7 @@ public class LibraryService {
     private BookRepository bookRepository;
 
     public ResponseEntity<Object> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.libraryRepository.findAll());
+        return ok(this.libraryRepository.findAll());
     }
 
     public ResponseEntity<Object> getLibraryById(UUID libraryId) {
