@@ -114,11 +114,11 @@ public class UserService {
             throw new IllegalArgumentException("E-mail format is not valid");
         }
 
-        if (userRepository.existsByEmail(userDTO.email())) {
+        if (this.userRepository.existsByEmail(userDTO.email())) {
             throw new IllegalArgumentException("E-mail is already registered");
         }
 
-        if (userRepository.existsByUsername(userDTO.username())) {
+        if (this.userRepository.existsByUsername(userDTO.username())) {
             throw new IllegalArgumentException("Username is already registered");
         }
 
@@ -134,11 +134,11 @@ public class UserService {
             throw new IllegalArgumentException("E-mail format is not valid");
         }
 
-        if (userRepository.existsByEmail(userDTO.email()) && !userDTO.email().equals(user.getEmail())) {
+        if (this.userRepository.existsByEmail(userDTO.email()) && !userDTO.email().equals(user.getEmail())) {
             throw new IllegalArgumentException("E-mail is already registered");
         }
 
-        if (userRepository.existsByUsername(userDTO.username()) && !userDTO.username().equals(user.getUsername())) {
+        if (this.userRepository.existsByUsername(userDTO.username()) && !userDTO.username().equals(user.getUsername())) {
             throw new IllegalArgumentException("Username is already registered");
         }
 
