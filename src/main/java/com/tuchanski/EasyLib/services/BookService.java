@@ -1,11 +1,9 @@
 package com.tuchanski.EasyLib.services;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -19,81 +17,78 @@ public class BookService {
 
     @Autowired
     private BookRepository bookRepository;
+    @Autowired
+    private DefaultEntityValidationHandler entityValidationHandler;
+    @Autowired
+    private ResponseHandler responseHandler;
 
     public ResponseEntity<Object> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.bookRepository.findAll());
+        return responseHandler.ok(this.bookRepository.findAll());
     }
 
-    public ResponseEntity<Object> getById(UUID id){
-        Optional<Book> existingBookOpt = this.bookRepository.findById(id);
+    public ResponseEntity<Object> getById(UUID bookId){
+        Book desiredBook = entityValidationHandler.validateBook(bookId);
 
-        if (existingBookOpt.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+        if (desiredBook == null){
+            return responseHandler.notFound("Book not found");
         }
 
-        Book isFound = existingBookOpt.get();
-
-        return ResponseEntity.status(HttpStatus.OK).body(isFound);
+        return responseHandler.ok(desiredBook);
     }
 
     public ResponseEntity<Object> createBook(BookRecordDTO bookDTO) {
         Book newBook = new Book();
         
         BeanUtils.copyProperties(bookDTO, newBook, "genre");
-
         BookGenre validatedGenre = getGenreByDisplayName(bookDTO.genre().toString());
+
         newBook.setGenre(validatedGenre);
         
         try {
             if (!this.bookRepository.existsByTitleAndAuthorAndGenre(newBook.getTitle(), newBook.getAuthor(), validatedGenre)){
-                return ResponseEntity.status(HttpStatus.CREATED).body(this.bookRepository.save(newBook));
+                return responseHandler.created(this.bookRepository.save(newBook));
             }
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Book already exists");
+            return responseHandler.conflict("Book already exists");
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+            return responseHandler.badRequest(e.getMessage());
         }
     }
 
-    public ResponseEntity<Object> deleteBook(UUID id){
+    public ResponseEntity<Object> deleteBook(UUID bookId){
 
-        Optional<Book> toBeDeleted = this.bookRepository.findById(id);
+        Book bookToBeDeleted = entityValidationHandler.validateBook(bookId);
 
-        if (toBeDeleted.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+        if (bookToBeDeleted == null){
+            return responseHandler.notFound("Book not found");
         }
 
-        this.bookRepository.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("Book with ID " + id + " has been deleted");
+        this.bookRepository.deleteById(bookId);
+        return responseHandler.ok("Book with ID [" + bookId + "] has been deleted");
     }
 
-    public ResponseEntity<Object> updateBook(UUID id, BookRecordDTO newInfoDTO){
+    public ResponseEntity<Object> updateBook(UUID bookId, BookRecordDTO newInfoDTO){
 
-        Optional<Book> existingBookOpt = this.bookRepository.findById(id);
+        Book bookToBeUpdated = entityValidationHandler.validateBook(bookId);
 
-        if (existingBookOpt.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found");
+        if (bookToBeUpdated == null){
+            return responseHandler.notFound("Book not found");
         }
-
-        Book bookToBeUpdated = existingBookOpt.get();
 
         BookGenre validatedGenre = getGenreByDisplayName(newInfoDTO.genre().toString());
-
-        boolean bookExists = this.bookRepository.existsByTitleAndAuthorAndGenre(newInfoDTO.title(), newInfoDTO.author(), validatedGenre);
-        if (bookExists) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Book already exists");
-        }
+        
+        validateBookUpdateDTO(newInfoDTO, bookToBeUpdated);
 
         bookToBeUpdated.setTitle(newInfoDTO.title());
+        bookToBeUpdated.setDescription(newInfoDTO.description());
         bookToBeUpdated.setAuthor(newInfoDTO.author());
         bookToBeUpdated.setGenre(validatedGenre);
 
         try {
-            Book updatedBook = this.bookRepository.save(bookToBeUpdated);
-            return ResponseEntity.status(HttpStatus.OK).body(updatedBook);
+            return responseHandler.ok(this.bookRepository.save(bookToBeUpdated));
 
         } catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+            return responseHandler.badRequest(e.getMessage());
         }
     }
 
@@ -104,6 +99,16 @@ public class BookService {
             }
         }
         throw new IllegalArgumentException("Genre not found: " + displayName);
+    }
+
+    private void validateBookUpdateDTO(BookRecordDTO bookDTO, Book book){
+
+        if (this.bookRepository.existsByTitle(bookDTO.title()) && !bookDTO.title().equals(book.getTitle())) {
+            if (this.bookRepository.existsByAuthor(bookDTO.author()) && !bookDTO.author().equals(book.getAuthor())){
+                throw new IllegalArgumentException("Book with inserted title and author is already registered");
+            }
+        }
+
     }
 
 }

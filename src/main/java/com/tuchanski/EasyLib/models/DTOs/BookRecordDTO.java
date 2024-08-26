@@ -7,6 +7,6 @@ import jakarta.validation.constraints.NotNull;
 public record BookRecordDTO(
         @NotBlank(message = "Title is mandatory") String title,
         @NotBlank(message = "Author is mandatory") String author,
-        @NotBlank(message = "Description is mandatory") String description,
+        String description,
         @NotNull(message = "Genre is mandatory") BookGenre genre) {
 }
