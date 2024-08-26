@@ -53,7 +53,7 @@ public class UserService {
 
         User newUser = new User();
 
-        validateUserCreation(userDTO);
+        validateUserCreationDTO(userDTO);
 
         try {
             BeanUtils.copyProperties(userDTO, newUser);
