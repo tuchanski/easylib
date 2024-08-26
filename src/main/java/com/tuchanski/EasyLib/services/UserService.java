@@ -60,6 +60,7 @@ public class UserService {
 
         try {
             BeanUtils.copyProperties(userDTO, newUser);
+            newUser.setUsername(newUser.getUsername().toLowerCase());
             newUser.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
             return responseHandler.created(this.userRepository.save(newUser));
 
@@ -99,6 +100,8 @@ public class UserService {
         }
 
         BeanUtils.copyProperties(newInfoDTO, userToBeUpdated, "password");
+
+        userToBeUpdated.setUsername(userToBeUpdated.getUsername().toLowerCase());
 
         try {
             return responseHandler.ok(this.userRepository.save(userToBeUpdated));
