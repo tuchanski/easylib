@@ -2,12 +2,10 @@ package com.tuchanski.EasyLib.services;
 
 import org.springframework.beans.BeanUtils;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +20,10 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private DefaultEntityValidationHandler entityValidationHandler;
+    @Autowired
+    private ResponseHandler responseHandler;
 
     private PasswordEncoder passwordEncoder;
     private EmailValidator emailValidator;
@@ -32,20 +34,18 @@ public class UserService {
     }
 
     public ResponseEntity<Object> getAll() {
-        return ResponseEntity.status(HttpStatus.OK).body(this.userRepository.findAll());
+        return responseHandler.ok(this.userRepository.findAll());
     }
 
-    public ResponseEntity<Object> getById(UUID id) {
+    public ResponseEntity<Object> getById(UUID userId) {
 
-        Optional<User> existingUserOpt = this.userRepository.findById(id);
+        User desiredUser = entityValidationHandler.validateUser(userId);
 
-        if (existingUserOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        if (desiredUser == null) {
+            return responseHandler.notFound("User not found");
         }
 
-        User isFound = existingUserOpt.get();
-
-        return ResponseEntity.status(HttpStatus.OK).body(isFound);
+        return responseHandler.ok(desiredUser);
 
     }
 
@@ -53,67 +53,57 @@ public class UserService {
 
         User newUser = new User();
 
-        ResponseEntity<Object> validatedDtoRequest = validateUserDTO(userDTO);
+        validateUserCreation(userDTO);
 
         try {
-
-            var treatedDto = (UserRecordDTO) validatedDtoRequest.getBody();
-            BeanUtils.copyProperties(treatedDto, newUser);
+            BeanUtils.copyProperties(userDTO, newUser);
             newUser.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
-            return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(newUser));
+            return responseHandler.created(this.userRepository.save(newUser));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+            return responseHandler.badRequest(e.getMessage());
         }
 
     }
 
-    public ResponseEntity<Object> deleteUser(UUID id) {
+    public ResponseEntity<Object> deleteUser(UUID userId) {
 
-        Optional<User> existingUserOpt = this.userRepository.findById(id);
+        User userToBeDeleted = entityValidationHandler.validateUser(userId);
 
-        if (existingUserOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        if (userToBeDeleted == null) {
+            return responseHandler.notFound("User not found");
         }
 
-        this.userRepository.deleteById(id);
-        return ResponseEntity.status(HttpStatus.OK).body("User with ID " + id + " has been deleted");
+        this.userRepository.deleteById(userId);
+        return responseHandler.ok("User with ID " + userId + " has been deleted");
 
     }
 
-    public ResponseEntity<Object> updateUser(UUID id, UserRecordDTO newInfoDTO) {
+    public ResponseEntity<Object> updateUser(UUID userId, UserRecordDTO newInfoDTO) {
 
-        Optional<User> existingUserOpt = this.userRepository.findById(id);
+        User userToBeUpdated = entityValidationHandler.validateUser(userId);
 
-        if (existingUserOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        if (userToBeUpdated == null) {
+            return responseHandler.notFound("User not found");
         }
 
-        User userToBeUpdated = existingUserOpt.get();
+        validateUserUpdateDTO(newInfoDTO, userToBeUpdated);
 
-        var validatedDTO = (UserRecordDTO) validateUserDTO(newInfoDTO).getBody();
-
-        if (!this.passwordEncoder.matches(validatedDTO.password(), userToBeUpdated.getPassword())) {
-            userToBeUpdated.setPassword(this.passwordEncoder.encode(validatedDTO.password()));
+        if (!this.passwordEncoder.matches(newInfoDTO.password(), userToBeUpdated.getPassword())) {
+            userToBeUpdated.setPassword(this.passwordEncoder.encode(newInfoDTO.password()));
         }
 
-        if (!userToBeUpdated.getUsername().equals(validatedDTO.username())){
-            userToBeUpdated.setUsername(validatedDTO.username());
-        }
-
-        if (!userToBeUpdated.getEmail().equals(validatedDTO.email())){
-            userToBeUpdated.setEmail(validatedDTO.email());
-        }
+        BeanUtils.copyProperties(newInfoDTO, userToBeUpdated, "password");
 
         try {
-            return ResponseEntity.status(HttpStatus.OK).body(this.userRepository.save(userToBeUpdated));
+            return responseHandler.ok(this.userRepository.save(userToBeUpdated));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error: " + e.getMessage());
+            return responseHandler.badRequest(e.getMessage());
         }
     }
 
-    private ResponseEntity<Object> validateUserDTO(UserRecordDTO userDTO) {
+    private void validateUserCreation(UserRecordDTO userDTO) {
 
         if (!emailValidator.isValid(userDTO.email())) {
             throw new IllegalArgumentException("E-mail format is not valid");
@@ -131,7 +121,26 @@ public class UserService {
             throw new IllegalArgumentException("Password is too short - Must have at least 5 characters.");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(userDTO);
-
     }
+
+    private void validateUserUpdateDTO(UserRecordDTO userDTO, User user){
+
+        if (!emailValidator.isValid(userDTO.email())) {
+            throw new IllegalArgumentException("E-mail format is not valid");
+        }
+
+        if (userRepository.existsByEmail(userDTO.email()) && !userDTO.email().equals(user.getEmail())) {
+            throw new IllegalArgumentException("E-mail is already registered");
+        }
+
+        if (userRepository.existsByUsername(userDTO.username()) && !userDTO.username().equals(user.getUsername())) {
+            throw new IllegalArgumentException("Username is already registered");
+        }
+
+        if (userDTO.password().length() < 5) {
+            throw new IllegalArgumentException("Password is too short - Must have at least 5 characters.");
+        }
+    }
+
+    
 }

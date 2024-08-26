@@ -26,8 +26,11 @@ public class LibraryService {
     @Autowired
     private DefaultEntityValidationHandler entityValidationHandler;
 
+    @Autowired
+    private ResponseHandler responseHandler;
+
     public ResponseEntity<Object> getAll() {
-        return ResponseHandler.ok(this.libraryRepository.findAll());
+        return responseHandler.ok(this.libraryRepository.findAll());
     }
 
     public ResponseEntity<Object> getLibraryById(UUID libraryId) {
@@ -35,10 +38,10 @@ public class LibraryService {
         Library desiredLibrary = entityValidationHandler.validateLibrary(libraryId);
 
         if (desiredLibrary == null) {
-            return ResponseHandler.notFound("Library not found");
+            return responseHandler.notFound("Library not found");
         }
 
-        return ResponseHandler.ok(desiredLibrary);
+        return responseHandler.ok(desiredLibrary);
 
     }
 
@@ -48,18 +51,18 @@ public class LibraryService {
         User currentUser = entityValidationHandler.validateUser(userId);
 
         if (currentUser == null) {
-            return ResponseHandler.notFound("User not found");
+            return responseHandler.notFound("User not found");
         }
 
         if (this.libraryRepository.existsByUser(currentUser)) {
-            return ResponseHandler.conflict("User already has a library");
+            return responseHandler.conflict("User already has a library");
         }
 
         LibraryRecordDTO libraryDTO = new LibraryRecordDTO(currentUser);
         Library newLibrary = new Library();
 
         BeanUtils.copyProperties(libraryDTO, newLibrary);
-        return ResponseHandler.created(this.libraryRepository.save(newLibrary));
+        return responseHandler.created(this.libraryRepository.save(newLibrary));
 
     }
 
@@ -69,11 +72,11 @@ public class LibraryService {
         Library currentLibrary = entityValidationHandler.validateLibrary(libraryId);
 
         if (currentLibrary == null) {
-            return ResponseHandler.notFound("Library not found");
+            return responseHandler.notFound("Library not found");
         }
 
         this.libraryRepository.deleteById(libraryId);
-        return ResponseHandler.ok("Library has been deleted");
+        return responseHandler.ok("Library has been deleted");
 
     }
 
@@ -83,11 +86,11 @@ public class LibraryService {
         Library currentLibrary = entityValidationHandler.validateLibrary(libraryId);
 
         if (currentLibrary == null) {
-            return ResponseHandler.notFound("Library not found");
+            return responseHandler.notFound("Library not found");
         }
 
         if (currentLibrary.getBooks().isEmpty()) {
-            return ResponseHandler.conflict("Selected library is already empty");
+            return responseHandler.conflict("Selected library is already empty");
         }
 
         List<Book> emptyBookList = new ArrayList<>();
@@ -95,7 +98,7 @@ public class LibraryService {
         currentLibrary.setBooks(emptyBookList);
         this.libraryRepository.save(currentLibrary);
 
-        return ResponseHandler.ok("The library has been cleaned");
+        return responseHandler.ok("The library has been cleaned");
 
     }
 
@@ -105,22 +108,22 @@ public class LibraryService {
         Library currentLibrary = entityValidationHandler.validateLibrary(libraryId);
 
         if (currentLibrary == null) {
-            return ResponseHandler.notFound("Library not found");
+            return responseHandler.notFound("Library not found");
         }
 
         Book bookToBeAdded = entityValidationHandler.validateBook(bookId);
 
         if (bookToBeAdded == null) {
-            return ResponseHandler.notFound("Book not found");
+            return responseHandler.notFound("Book not found");
         }
 
         if (currentLibrary.getBooks().contains(bookToBeAdded)) {
-            return ResponseHandler.conflict("Book already registered on selected library");
+            return responseHandler.conflict("Book already registered on selected library");
         }
 
         currentLibrary.addBook(bookToBeAdded);
 
-        return ResponseHandler.ok(this.libraryRepository.save(currentLibrary));
+        return responseHandler.ok(this.libraryRepository.save(currentLibrary));
 
     }
 
@@ -130,22 +133,22 @@ public class LibraryService {
         Library currentLibrary = entityValidationHandler.validateLibrary(libraryId);
 
         if (currentLibrary == null) {
-            return ResponseHandler.notFound("Library not found");
+            return responseHandler.notFound("Library not found");
         }
 
         Book bookToBeDeleted = entityValidationHandler.validateBook(bookId);
 
         if (bookToBeDeleted == null) {
-            return ResponseHandler.notFound("Book not found");
+            return responseHandler.notFound("Book not found");
         }
 
         if (!currentLibrary.getBooks().contains(bookToBeDeleted)) {
-            return ResponseHandler.conflict("Book is not registered on selected library");
+            return responseHandler.conflict("Book is not registered on selected library");
         }
 
         currentLibrary.deleteBook(bookToBeDeleted);
         this.libraryRepository.save(currentLibrary);
-        return ResponseHandler.ok("Selected book has been successfully deleted on selected library");
+        return responseHandler.ok("Selected book has been successfully deleted on selected library");
     }
 
 }
