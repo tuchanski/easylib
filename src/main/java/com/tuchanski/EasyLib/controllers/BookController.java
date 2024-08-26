@@ -30,9 +30,9 @@ public class BookController {
         return this.bookService.getAll();
     }
 
-    @GetMapping("/{id}")
-    private ResponseEntity<Object> getById(@PathVariable(value = "id") UUID id){
-        return this.bookService.getById(id);
+    @GetMapping("/{bookId}")
+    private ResponseEntity<Object> getById(@PathVariable(value = "bookId") UUID bookId){
+        return this.bookService.getById(bookId);
     }
 
     @PostMapping
@@ -40,14 +40,14 @@ public class BookController {
         return this.bookService.createBook(newBook);
     }
 
-    @DeleteMapping("/{id}")
-    private ResponseEntity<Object> deleteBook(@PathVariable(value = "id") UUID id){
-        return this.bookService.deleteBook(id);
+    @DeleteMapping("/{bookId}")
+    private ResponseEntity<Object> deleteBook(@PathVariable(value = "bookId") UUID bookId){
+        return this.bookService.deleteBook(bookId);
     }
 
-    @PutMapping("/{id}")
-    private ResponseEntity<Object> updateBook(@PathVariable(value = "id") UUID id, @RequestBody @Valid BookRecordDTO updatedBookDTO){
-        return this.bookService.updateBook(id, updatedBookDTO);
+    @PutMapping("/{bookId}")
+    private ResponseEntity<Object> updateBook(@PathVariable(value = "bookId") UUID bookId, @RequestBody @Valid BookRecordDTO updatedBookDTO){
+        return this.bookService.updateBook(bookId, updatedBookDTO);
     }
 
 }

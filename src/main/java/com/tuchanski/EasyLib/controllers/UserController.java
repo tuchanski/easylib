@@ -30,9 +30,9 @@ public class UserController {
         return this.userService.getAll();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable(value = "id") UUID id) {
-        return this.userService.getById(id);
+    @GetMapping("/{userId}")
+    public ResponseEntity<Object> getById(@PathVariable(value = "userId") UUID userId) {
+        return this.userService.getById(userId);
     }
 
     @PostMapping
@@ -40,15 +40,15 @@ public class UserController {
         return this.userService.createUser(newUser);
     }
 
-    @DeleteMapping("/{id}")
-    private ResponseEntity<Object> deleteUser(@PathVariable(value = "id") UUID id) {
-        return this.userService.deleteUser(id);
+    @DeleteMapping("/{userId}")
+    private ResponseEntity<Object> deleteUser(@PathVariable(value = "userId") UUID userId) {
+        return this.userService.deleteUser(userId);
     }
 
-    @PutMapping("/{id}")
-    private ResponseEntity<Object> updateUser(@PathVariable(value = "id") UUID id,
+    @PutMapping("/{userId}")
+    private ResponseEntity<Object> updateUser(@PathVariable(value = "userId") UUID userId,
             @RequestBody @Valid UserRecordDTO userDTO) {
-        return this.userService.updateUser(id, userDTO);
+        return this.userService.updateUser(userId, userDTO);
     }
 
 }

@@ -12,5 +12,8 @@ import com.tuchanski.EasyLib.models.enums.BookGenre;
 public interface BookRepository extends JpaRepository<Book, UUID> {
 
     boolean existsByTitleAndAuthorAndGenre(String title, String author, BookGenre genre);
+    boolean existsByTitle(String title);
+    boolean existsByAuthor(String author);
+    
     
 }

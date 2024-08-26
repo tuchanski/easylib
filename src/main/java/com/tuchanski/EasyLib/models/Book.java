@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import com.tuchanski.EasyLib.models.enums.BookGenre;
 
+import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -38,7 +39,7 @@ public class Book implements Serializable {
     @NotNull
     private String author;
 
-    @NotNull
+    @Nullable
     private String description;
 
     @NotNull
