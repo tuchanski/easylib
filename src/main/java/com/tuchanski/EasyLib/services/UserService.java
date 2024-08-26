@@ -15,6 +15,8 @@ import com.tuchanski.EasyLib.models.User;
 import com.tuchanski.EasyLib.models.DTOs.UserRecordDTO;
 import com.tuchanski.EasyLib.repositories.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class UserService {
 
@@ -49,6 +51,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public ResponseEntity<Object> createUser(UserRecordDTO userDTO) {
 
         User newUser = new User();
@@ -66,6 +69,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public ResponseEntity<Object> deleteUser(UUID userId) {
 
         User userToBeDeleted = entityValidationHandler.validateUser(userId);
@@ -79,6 +83,7 @@ public class UserService {
 
     }
 
+    @Transactional
     public ResponseEntity<Object> updateUser(UUID userId, UserRecordDTO newInfoDTO) {
 
         User userToBeUpdated = entityValidationHandler.validateUser(userId);
