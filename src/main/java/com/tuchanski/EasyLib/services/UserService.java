@@ -103,7 +103,7 @@ public class UserService {
         }
     }
 
-    private void validateUserCreation(UserRecordDTO userDTO) {
+    private void validateUserCreationDTO(UserRecordDTO userDTO) {
 
         if (!emailValidator.isValid(userDTO.email())) {
             throw new IllegalArgumentException("E-mail format is not valid");
