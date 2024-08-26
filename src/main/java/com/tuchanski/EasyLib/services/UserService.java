@@ -2,6 +2,7 @@ package com.tuchanski.EasyLib.services;
 
 import org.springframework.beans.BeanUtils;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.validator.routines.EmailValidator;
@@ -36,7 +37,13 @@ public class UserService {
     }
 
     public ResponseEntity<Object> getAll() {
-        return responseHandler.ok(this.userRepository.findAll());
+        List<User> registeredUsers = this.userRepository.findAll();
+
+        if (registeredUsers.isEmpty()){
+            return responseHandler.badRequest("No users registered on database");
+        }
+
+        return responseHandler.ok(registeredUsers);
     }
 
     public ResponseEntity<Object> getById(UUID userId) {

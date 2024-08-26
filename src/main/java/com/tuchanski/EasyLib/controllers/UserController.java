@@ -16,6 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.tuchanski.EasyLib.models.DTOs.UserRecordDTO;
 import com.tuchanski.EasyLib.services.UserService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
 @RestController
@@ -25,6 +28,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Operation(description = "Get all users registered on EasyLib database")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Return users registered on EasyLib database"),
+        @ApiResponse(responseCode = "400", description = "There is no registered users on EasyLib database")
+    })
     @GetMapping
     public ResponseEntity<Object> getAll() {
         return this.userService.getAll();
