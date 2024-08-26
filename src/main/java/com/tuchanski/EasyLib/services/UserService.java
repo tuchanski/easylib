@@ -23,9 +23,9 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private DefaultEntityValidationHandler entityValidationHandler;
+    private DefaultEntityValidationHandlerService entityValidationHandler;
     @Autowired
-    private ResponseHandler responseHandler;
+    private ResponseHandlerService responseHandler;
 
     private PasswordEncoder passwordEncoder;
     private EmailValidator emailValidator;

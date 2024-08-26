@@ -20,9 +20,9 @@ public class BookService {
     @Autowired
     private BookRepository bookRepository;
     @Autowired
-    private DefaultEntityValidationHandler entityValidationHandler;
+    private DefaultEntityValidationHandlerService entityValidationHandler;
     @Autowired
-    private ResponseHandler responseHandler;
+    private ResponseHandlerService responseHandler;
 
     public ResponseEntity<Object> getAll() {
         return responseHandler.ok(this.bookRepository.findAll());

@@ -24,10 +24,10 @@ public class LibraryService {
     private LibraryRepository libraryRepository;
 
     @Autowired
-    private DefaultEntityValidationHandler entityValidationHandler;
+    private DefaultEntityValidationHandlerService entityValidationHandler;
 
     @Autowired
-    private ResponseHandler responseHandler;
+    private ResponseHandlerService responseHandler;
 
     public ResponseEntity<Object> getAll() {
         return responseHandler.ok(this.libraryRepository.findAll());

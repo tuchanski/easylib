@@ -1,5 +1,6 @@
 package com.tuchanski.EasyLib.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -13,18 +14,14 @@ import com.tuchanski.EasyLib.repositories.UserRepository;
 import com.tuchanski.EasyLib.models.interfaces.EntityValidationHandler;
 
 @Service
-public class DefaultEntityValidationHandler implements EntityValidationHandler {
-    private final LibraryRepository libraryRepository;
-    private final UserRepository userRepository;
-    private final BookRepository bookRepository;
-
-    public DefaultEntityValidationHandler(LibraryRepository libraryRepository,
-            UserRepository userRepository,
-            BookRepository bookRepository) {
-        this.libraryRepository = libraryRepository;
-        this.userRepository = userRepository;
-        this.bookRepository = bookRepository;
-    }
+public class DefaultEntityValidationHandlerService implements EntityValidationHandler {
+    
+    @Autowired
+    private LibraryRepository libraryRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private BookRepository bookRepository;
 
     @Override
     public Library validateLibrary(UUID libraryId) {

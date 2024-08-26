@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ResponseHandler {
+public class ResponseHandlerService {
 
     public ResponseEntity<Object> notFound(String message) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
