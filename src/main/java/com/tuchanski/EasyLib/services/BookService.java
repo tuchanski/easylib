@@ -12,6 +12,8 @@ import com.tuchanski.EasyLib.models.DTOs.BookRecordDTO;
 import com.tuchanski.EasyLib.models.enums.BookGenre;
 import com.tuchanski.EasyLib.repositories.BookRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class BookService {
 
@@ -36,6 +38,7 @@ public class BookService {
         return responseHandler.ok(desiredBook);
     }
 
+    @Transactional
     public ResponseEntity<Object> createBook(BookRecordDTO bookDTO) {
         Book newBook = new Book();
         
@@ -55,6 +58,7 @@ public class BookService {
         }
     }
 
+    @Transactional
     public ResponseEntity<Object> deleteBook(UUID bookId){
 
         Book bookToBeDeleted = entityValidationHandler.validateBook(bookId);
@@ -67,6 +71,7 @@ public class BookService {
         return responseHandler.ok("Book with ID [" + bookId + "] has been deleted");
     }
 
+    @Transactional
     public ResponseEntity<Object> updateBook(UUID bookId, BookRecordDTO newInfoDTO){
 
         Book bookToBeUpdated = entityValidationHandler.validateBook(bookId);
