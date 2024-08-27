@@ -1,5 +1,6 @@
 package com.tuchanski.EasyLib.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -25,7 +26,13 @@ public class BookService {
     private ResponseHandlerService responseHandler;
 
     public ResponseEntity<Object> getAll() {
-        return responseHandler.ok(this.bookRepository.findAll());
+        List<Book> registeredBooks = this.bookRepository.findAll();
+
+        if (registeredBooks.isEmpty()){
+            return responseHandler.notFound("No books registered on database");
+        }
+
+        return responseHandler.ok(registeredBooks);
     }
 
     public ResponseEntity<Object> getById(UUID bookId){
@@ -45,17 +52,17 @@ public class BookService {
         BeanUtils.copyProperties(bookDTO, newBook, "genre");
         BookGenre validatedGenre = getGenreByDisplayName(bookDTO.genre().toString());
 
-        newBook.setGenre(validatedGenre);
-        
         try {
-            if (!this.bookRepository.existsByTitleAndAuthorAndGenre(newBook.getTitle(), newBook.getAuthor(), validatedGenre)){
-                return responseHandler.created(this.bookRepository.save(newBook));
-            }
-            return responseHandler.conflict("Book already exists");
-
-        } catch (Exception e) {
+            newBook.setGenre(validatedGenre);
+        } catch (IllegalArgumentException e){
             return responseHandler.badRequest(e.getMessage());
         }
+        
+        if (!this.bookRepository.existsByTitleAndAuthorAndGenre(newBook.getTitle(), newBook.getAuthor(), validatedGenre)){
+            return responseHandler.created(this.bookRepository.save(newBook));
+        }
+        return responseHandler.conflict("Book already exists");
+
     }
 
     @Transactional
@@ -82,19 +89,18 @@ public class BookService {
 
         BookGenre validatedGenre = getGenreByDisplayName(newInfoDTO.genre().toString());
         
-        validateBookUpdateDTO(newInfoDTO, bookToBeUpdated);
+        try {
+            validateBookUpdateDTO(newInfoDTO, bookToBeUpdated);
+        } catch (IllegalArgumentException e){
+            return responseHandler.conflict(e.getMessage());
+        }
 
         bookToBeUpdated.setTitle(newInfoDTO.title());
         bookToBeUpdated.setDescription(newInfoDTO.description());
         bookToBeUpdated.setAuthor(newInfoDTO.author());
         bookToBeUpdated.setGenre(validatedGenre);
 
-        try {
-            return responseHandler.ok(this.bookRepository.save(bookToBeUpdated));
-
-        } catch (Exception e){
-            return responseHandler.badRequest(e.getMessage());
-        }
+        return responseHandler.ok(this.bookRepository.save(bookToBeUpdated));
     }
 
     private BookGenre getGenreByDisplayName(String displayName){

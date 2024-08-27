@@ -40,7 +40,7 @@ public class UserService {
         List<User> registeredUsers = this.userRepository.findAll();
 
         if (registeredUsers.isEmpty()){
-            return responseHandler.badRequest("No users registered on database");
+            return responseHandler.notFound("No users registered on database");
         }
 
         return responseHandler.ok(registeredUsers);

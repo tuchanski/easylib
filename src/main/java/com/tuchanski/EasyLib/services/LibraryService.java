@@ -30,7 +30,13 @@ public class LibraryService {
     private ResponseHandlerService responseHandler;
 
     public ResponseEntity<Object> getAll() {
-        return responseHandler.ok(this.libraryRepository.findAll());
+        List<Library> registeredLibraries = this.libraryRepository.findAll();
+
+        if (registeredLibraries.isEmpty()){
+            return responseHandler.notFound("No libraries registered on database");
+        }
+
+        return responseHandler.ok(registeredLibraries);
     }
 
     public ResponseEntity<Object> getLibraryById(UUID libraryId) {
