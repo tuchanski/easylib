@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 
 @SpringBootApplication
-@OpenAPIDefinition(info = @Info(title = "EasyLib OpenAPI", version = "1", description = "API desenvolvida para um sistema de biblioteca pessoal"))
+@OpenAPIDefinition(info = @Info(title = "EasyLib OpenAPI", version = "1", description = "Manage your own personal library using EasyLib OpenAPI"))
 @EnableScheduling
 public class EasyLibApplication {
 
