@@ -24,7 +24,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping(value = "api/books", produces = {"application/json"})
-@Tag(name = "easylib-openapi")
+@Tag(name = "books")
 public class BookController {
 
     @Autowired
