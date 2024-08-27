@@ -32,7 +32,7 @@ public class BookController {
 
     @Operation(summary = "Get all books registered in database")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Returns all books registered in database successfully"),
+        @ApiResponse(responseCode = "200", description = "Returns all books registered in database"),
         @ApiResponse(responseCode = "404", description = "No books registered in database")
     })
     @GetMapping
@@ -40,9 +40,9 @@ public class BookController {
         return this.bookService.getAll();
     }
     
-    @Operation(summary = "Get book registered in database by id")
+    @Operation(summary = "Get registered book in database")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Returns selected book registered in database successfully"),
+        @ApiResponse(responseCode = "200", description = "Returns selected book registered in database"),
         @ApiResponse(responseCode = "404", description = "Selected book not found")
     })
     @GetMapping("/{bookId}")

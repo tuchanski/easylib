@@ -62,19 +62,17 @@ public class UserService {
     public ResponseEntity<Object> createUser(UserRecordDTO userDTO) {
 
         User newUser = new User();
-
-        validateUserCreationDTO(userDTO);
-
+        
         try {
-            BeanUtils.copyProperties(userDTO, newUser);
-            newUser.setUsername(newUser.getUsername().toLowerCase());
-            newUser.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
-            return responseHandler.created(this.userRepository.save(newUser));
-
-        } catch (Exception e) {
+            validateUserCreationDTO(userDTO);
+        } catch (IllegalArgumentException e){
             return responseHandler.badRequest(e.getMessage());
         }
 
+        BeanUtils.copyProperties(userDTO, newUser);
+        newUser.setUsername(newUser.getUsername().toLowerCase());
+        newUser.setPassword(this.passwordEncoder.encode(newUser.getPassword()));
+        return responseHandler.created(this.userRepository.save(newUser));
     }
 
     @Transactional
@@ -100,7 +98,11 @@ public class UserService {
             return responseHandler.notFound("User not found");
         }
 
-        validateUserUpdateDTO(newInfoDTO, userToBeUpdated);
+        try {
+            validateUserUpdateDTO(newInfoDTO, userToBeUpdated);
+        } catch (IllegalArgumentException e){
+            return responseHandler.badRequest(e.getMessage());
+        }
 
         if (!this.passwordEncoder.matches(newInfoDTO.password(), userToBeUpdated.getPassword())) {
             userToBeUpdated.setPassword(this.passwordEncoder.encode(newInfoDTO.password()));
