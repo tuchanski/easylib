@@ -28,6 +28,7 @@
 - **Maven 3.x**
 - **Spring Boot 3.x**
 - **PostgreSQL** (or another database supported by Spring Data JPA)
+<br>**Note:** If you are using a different database, make sure to include the appropriate database driver dependency in your `pom.xml`.
 
 ### Installation
 
@@ -45,6 +46,7 @@
    ```bash
    psql -U [username] -f db_script/easylib.sql
    ```
+   Note: If you are using a different database than PostgreSQL, this command will vary.
 
 4. **Build the project:**
    ```bash
