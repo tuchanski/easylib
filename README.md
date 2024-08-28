@@ -34,20 +34,29 @@
 1. **Clone the repository:**
    ```bash
    git clone https://github.com/tuchanski/easylib
+   ```
+
+2. **Navigate to the project directory:**
+   ```bash
    cd easylib
    ```
 
-2. **Build the project:**
+3. **Run SQL script to create database:**
+   ```bash
+   psql -U [username] -f db_script/easylib.sql
+   ```
+
+4. **Build the project:**
    ```bash
    mvn clean install
    ```
 
-3. **Run the application:**
+5. **Run the application:**
    ```bash
    mvn spring-boot:run
    ```
 
-4. **Access the API documentation:**
+6. **Access the API documentation:**
    - Open your browser and go to `http://localhost:8080/swagger-ui.html` to view the OpenAPI documentation.
 
 ### Main Dependencies
