@@ -90,7 +90,7 @@ Here are some of the main endpoints:
 
 ## Author
  
-- Guilherme Tuchanski Rocha | [GitHub](https://github.com/tuchanski) [LinkedIn](https://www.linkedin.com/in/tuchanski/)
+- Guilherme Tuchanski Rocha | [GitHub](https://github.com/tuchanski) | [LinkedIn](https://www.linkedin.com/in/tuchanski/)
 
 ## License
 
