@@ -89,8 +89,8 @@ Here are some of the main endpoints:
   - `DELETE api/libraries/clean/{libraryId}`: Clear all books from a library.
 
 ## Author
-
-- Guilherme Tuchanski Rocha
+ 
+- Guilherme Tuchanski Rocha | [GitHub](https://github.com/tuchanski) [LinkedIn](https://www.linkedin.com/in/tuchanski/)
 
 ## License
 
