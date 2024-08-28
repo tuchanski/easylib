@@ -26,29 +26,29 @@ public class LibraryController {
     @Autowired
     private LibraryService libraryService;
 
-    @Operation(summary = "Get all libraries registered in database")
+    @Operation(summary = "Retrieve all libraries")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Returns all registered libraries in database"),
-        @ApiResponse(responseCode = "404", description = "No registered libraries in database")
+        @ApiResponse(responseCode = "200", description = "Retrieved all registered libraries"),
+        @ApiResponse(responseCode = "404", description = "Not found registered libraries")
     })
     @GetMapping
     public ResponseEntity<Object> getAll() {
         return this.libraryService.getAll();
     }
 
-    @Operation(summary = "Get registered library in database")
+    @Operation(summary = "Retrieve a library by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Returns selected library in database"),
-        @ApiResponse(responseCode = "404", description = "Selected library not found")
+        @ApiResponse(responseCode = "200", description = "Retrieved selected library successfully"),
+        @ApiResponse(responseCode = "404", description = "Not found selected library")
     })
     @GetMapping("{libraryId}")
     public ResponseEntity<Object> getById(@PathVariable(value = "libraryId") UUID libraryId) {
         return this.libraryService.getLibraryById(libraryId);
     }
 
-    @Operation(summary = "Add new library in database by user")
+    @Operation(summary = "Create a library for a user")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Added new library in database successfully"),
+        @ApiResponse(responseCode = "201", description = "Created new library successfully"),
         @ApiResponse(responseCode = "409", description = "Selected user already has a library")
     })
     @PostMapping("{userId}")
@@ -56,20 +56,20 @@ public class LibraryController {
         return this.libraryService.createLibrary(userId);
     }
 
-    @Operation(summary = "Delete selected library in database")
+    @Operation(summary = "Delete a library by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Deletes selected library in database successfully"),
-        @ApiResponse(responseCode = "404", description = "Selected library not found")
+        @ApiResponse(responseCode = "200", description = "Deleted selected library successfully"),
+        @ApiResponse(responseCode = "404", description = "Not found selected library")
     })
     @DeleteMapping("{libraryId}")
     public ResponseEntity<Object> deleteLibrary(@PathVariable(value = "libraryId") UUID libraryId) {
         return this.libraryService.deleteLibrary(libraryId);
     }
 
-    @Operation(summary = "Clean selected library")
+    @Operation(summary = "Clear all books from a library")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Selected library has been cleaned"),
-        @ApiResponse(responseCode = "404", description = "Selected library not found"),
+        @ApiResponse(responseCode = "200", description = "Selected library has been cleaned successfully"),
+        @ApiResponse(responseCode = "404", description = "Not found selected library"),
         @ApiResponse(responseCode = "409", description = "Selected library is already empty")
     })
     @DeleteMapping("/clean/{libraryId}")
@@ -77,11 +77,11 @@ public class LibraryController {
         return this.libraryService.cleanLibrary(libraryId);
     }
 
-    @Operation(summary = "Add selected book to selected library")
+    @Operation(summary = "Add a book to a library by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Added selected book to selected library"),
-        @ApiResponse(responseCode = "404", description = "Selected library not found or selected book not found"),
-        @ApiResponse(responseCode = "409", description = "Selected book is already registered in selected library")
+        @ApiResponse(responseCode = "200", description = "Added selected book to library successfully"),
+        @ApiResponse(responseCode = "404", description = "Not found selected library or selected book not found"),
+        @ApiResponse(responseCode = "409", description = "Selected book is already registered in library")
     })
     @PostMapping("/addBook/{libraryId}/{bookId}")
     public ResponseEntity<Object> addBook(@PathVariable(value = "libraryId") UUID libraryId,
@@ -89,11 +89,11 @@ public class LibraryController {
         return this.libraryService.addBook(libraryId, bookId);
     }
 
-    @Operation(summary = "Delete selected book to selected library")
+    @Operation(summary = "Remove a book from a library")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Deleted selected book in selected library"),
-        @ApiResponse(responseCode = "404", description = "Selected library not found or selected book not found"),
-        @ApiResponse(responseCode = "409", description = "Selected book is not registered in selected library")
+        @ApiResponse(responseCode = "200", description = "Removed selected book in library"),
+        @ApiResponse(responseCode = "404", description = "Not found selected library or selected book not found"),
+        @ApiResponse(responseCode = "409", description = "Selected book is not registered in library")
     })
     @DeleteMapping("/delBook/{libraryId}/{bookId}")
     public ResponseEntity<Object> deleteBook(@PathVariable(value = "libraryId") UUID libraryId,

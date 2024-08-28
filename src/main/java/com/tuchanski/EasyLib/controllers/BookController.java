@@ -30,29 +30,29 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @Operation(summary = "Get all books registered in database")
+    @Operation(summary = "Retrieve all books")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Returns all books registered in database"),
-        @ApiResponse(responseCode = "404", description = "No books registered in database")
+        @ApiResponse(responseCode = "200", description = "Retrieved all books registered"),
+        @ApiResponse(responseCode = "404", description = "Not found registered books")
     })
     @GetMapping
     private ResponseEntity<Object> getAll() {
         return this.bookService.getAll();
     }
     
-    @Operation(summary = "Get registered book in database")
+    @Operation(summary = "Retrieve a book by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Returns selected book registered in database"),
-        @ApiResponse(responseCode = "404", description = "Selected book not found")
+        @ApiResponse(responseCode = "200", description = "Retrieved selected book registered"),
+        @ApiResponse(responseCode = "404", description = "Not found selected book")
     })
     @GetMapping("/{bookId}")
     private ResponseEntity<Object> getById(@PathVariable(value = "bookId") UUID bookId){
         return this.bookService.getById(bookId);
     }
 
-    @Operation(summary = "Add new book in database")
+    @Operation(summary = "Create a new book")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Added new book in database successfully"),
+        @ApiResponse(responseCode = "201", description = "Created new book successfully"),
         @ApiResponse(responseCode = "409", description = "Book with same titile, author and genre is already registered"),
         @ApiResponse(responseCode = "400", description = "Genre ENUM validation failed")
     })
@@ -61,20 +61,20 @@ public class BookController {
         return this.bookService.createBook(newBook);
     }
 
-    @Operation(summary = "Delete selected book in database")
+    @Operation(summary = "Delete a book by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Deletes selected book in database successfully"),
-        @ApiResponse(responseCode = "404", description = "Selected book not found")
+        @ApiResponse(responseCode = "200", description = "Deleted selected book successfully"),
+        @ApiResponse(responseCode = "404", description = "Not found selected book")
     })
     @DeleteMapping("/{bookId}")
     private ResponseEntity<Object> deleteBook(@PathVariable(value = "bookId") UUID bookId){
         return this.bookService.deleteBook(bookId);
     }
 
-    @Operation(summary = "Update selected book in database")
+    @Operation(summary = "Update a book by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Updates selected book in database successfully"),
-        @ApiResponse(responseCode = "404", description = "Selected book not found"),
+        @ApiResponse(responseCode = "200", description = "Updated selected book successfully"),
+        @ApiResponse(responseCode = "404", description = "Not found selected book"),
         @ApiResponse(responseCode = "409", description = "Book with same title and author is already registered")
     })
     @PutMapping("/{bookId}")

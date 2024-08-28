@@ -30,29 +30,29 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Operation(summary = "Get all users registered in database")
+    @Operation(summary = "Retrieve all users")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Returns all registered users in database"),
-        @ApiResponse(responseCode = "404", description = "No users registered in database")
+        @ApiResponse(responseCode = "200", description = "Retrieved all registered users"),
+        @ApiResponse(responseCode = "404", description = "Not found registered users")
     })
     @GetMapping
     public ResponseEntity<Object> getAll() {
         return this.userService.getAll();
     }
 
-    @Operation(summary = "Get registered user in database")
+    @Operation(summary = "Retrieve a user by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Returns selected user registered in database"),
-        @ApiResponse(responseCode = "404", description = "Selected user not found")
+        @ApiResponse(responseCode = "200", description = "Retrieved selected user successfully"),
+        @ApiResponse(responseCode = "404", description = "Not found selected user")
     })
     @GetMapping("/{userId}")
     public ResponseEntity<Object> getById(@PathVariable(value = "userId") UUID userId) {
         return this.userService.getById(userId);
     }
 
-    @Operation(summary = "Add new user in database")
+    @Operation(summary = "Create a new user")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Added new user in database"),
+        @ApiResponse(responseCode = "201", description = "Created new user successfully"),
         @ApiResponse(responseCode = "409", description = "Failed to validate user DTO")
     })
     @PostMapping
@@ -60,20 +60,20 @@ public class UserController {
         return this.userService.createUser(newUser);
     }
 
-    @Operation(summary = "Delete selected user in database")
+    @Operation(summary = "Delete a user by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Deleted selected user in database"),
-        @ApiResponse(responseCode = "404", description = "Selected user not found")
+        @ApiResponse(responseCode = "200", description = "Deleted selected user successfully"),
+        @ApiResponse(responseCode = "404", description = "Not found selected user")
     })
     @DeleteMapping("/{userId}")
     private ResponseEntity<Object> deleteUser(@PathVariable(value = "userId") UUID userId) {
         return this.userService.deleteUser(userId);
     }
 
-    @Operation(summary = "Delete selected user in database")
+    @Operation(summary = "Update a user by ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Updated selected user in database"),
-        @ApiResponse(responseCode = "404", description = "Selected user not found"),
+        @ApiResponse(responseCode = "200", description = "Updated selected user successfully"),
+        @ApiResponse(responseCode = "404", description = "Not found selected user"),
         @ApiResponse(responseCode = "409", description = "Failed to validate new user info by DTO")
     })
     @PutMapping("/{userId}")
