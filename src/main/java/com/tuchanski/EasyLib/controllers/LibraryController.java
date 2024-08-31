@@ -72,7 +72,7 @@ public class LibraryController {
         @ApiResponse(responseCode = "404", description = "Not found selected library"),
         @ApiResponse(responseCode = "409", description = "Selected library is already empty")
     })
-    @DeleteMapping("/clean/{libraryId}")
+    @DeleteMapping("/clear/{libraryId}")
     public ResponseEntity<Object> cleanLibrary(@PathVariable(value = "libraryId") UUID libraryId) {
         return this.libraryService.cleanLibrary(libraryId);
     }
@@ -83,7 +83,7 @@ public class LibraryController {
         @ApiResponse(responseCode = "404", description = "Not found selected library or selected book not found"),
         @ApiResponse(responseCode = "409", description = "Selected book is already registered in library")
     })
-    @PostMapping("/addBook/{libraryId}/{bookId}")
+    @PostMapping("/{libraryId}/add-book/{bookId}")
     public ResponseEntity<Object> addBook(@PathVariable(value = "libraryId") UUID libraryId,
             @PathVariable(value = "bookId") UUID bookId) {
         return this.libraryService.addBook(libraryId, bookId);
@@ -95,7 +95,7 @@ public class LibraryController {
         @ApiResponse(responseCode = "404", description = "Not found selected library or selected book not found"),
         @ApiResponse(responseCode = "409", description = "Selected book is not registered in library")
     })
-    @DeleteMapping("/delBook/{libraryId}/{bookId}")
+    @DeleteMapping("/{libraryId}/del-book/{bookId}")
     public ResponseEntity<Object> deleteBook(@PathVariable(value = "libraryId") UUID libraryId,
             @PathVariable(value = "bookId") UUID bookId) {
         return this.libraryService.deleteBook(libraryId, bookId);
