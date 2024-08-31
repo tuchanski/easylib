@@ -98,7 +98,7 @@ Here are some of the main endpoints:
   - `GET api/libraries/{libraryId}`: Retrieve a library by ID.
   - `DELETE api/libraries/{libraryId}/del-book/{bookId}`: Remove a book from a library.
   - `DELETE api/libraries/{libraryId}`: Delete a library by ID.
-  - `DELETE api/libraries/clear/{libraryId}`: Clear all books from a library.
+  - `DELETE api/libraries/{libraryId}/clear`: Clear all books from a library.
 
 ## Author
  

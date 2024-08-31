@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping(value = "api/users", produces = {"application/json"})
+@RequestMapping(value = "api/users")
 @Tag(name = "users")
 public class UserController {
 
