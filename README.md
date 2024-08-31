@@ -93,12 +93,12 @@ Here are some of the main endpoints:
 
 - **Library Endpoints:**
   - `POST api/libraries/{userId}`: Create a library for a user.
-  - `POST api/libraries/addBook/{libraryId}/{bookId}`: Add a book to a library.
+  - `POST api/libraries/{libraryId}/add-book/{bookId}`: Add a book to a library.
   - `GET api/libraries`: Retrieve all libraries.
   - `GET api/libraries/{libraryId}`: Retrieve a library by ID.
-  - `DELETE api/libraries/delBook/{libraryId}/{bookId}`: Remove a book from a library.
+  - `DELETE api/libraries/{libraryId}/del-book/{bookId}`: Remove a book from a library.
   - `DELETE api/libraries/{libraryId}`: Delete a library by ID.
-  - `DELETE api/libraries/clean/{libraryId}`: Clear all books from a library.
+  - `DELETE api/libraries/clear/{libraryId}`: Clear all books from a library.
 
 ## Author
  
