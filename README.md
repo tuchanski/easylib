@@ -1,7 +1,7 @@
 
 # EasyLib 📚
 
-**EasyLib OpenAPI** is a personal library management API, designed to help users organize their personal book collections and manage their library with ease.
+**EasyLib** is a personal library management API, designed to help users organize their personal book collections and manage their library with ease.
 
 ## Features
 
