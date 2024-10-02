@@ -14,7 +14,7 @@
 - **Library Management**
   - Create a library for a user.
   - Add and remove books from the library.
-  - Delete and clear libraries.
+  - Delete or clear libraries.
 
 **Entity Relationships:**
 - A **User** has a one-to-one relationship with a **Library**.
